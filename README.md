@@ -1,9 +1,9 @@
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=30&pause=1000&color=F71329&multiline=true&width=435&lines=+yacut)](https://git.io/typing-svg)  
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=20&pause=1000&color=1D39F7&multiline=true&width=435&lines=+yacut)](https://git.io/typing-svg)  
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=15&duration=2000&pause=1000&color=1FBB30F6&multiline=true&width=435&lines=+yacut)](https://git.io/typing-svg)    
-[![Typing SVG](https://img.shields.io/badge/yacut-sprint--21%20ver.1-red)](https://git.io/typing-svg)
+[![Typing SVG](https://img.shields.io/badge/yacut-sprint--21%20ver.2-red)](https://git.io/typing-svg)
 
-### Проект: yacut. Спринт-21, ver.1, Зеленковский Сергей  
+### Проект: yacut. Спринт-21, ver.2, Зеленковский Сергей  
 ![](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)  
 ![](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRK7h38B8oEy58nDXqK63UZH0I6dBW7ew_KjoPje6scjQ&s)
 ![](https://www.sqlalchemy.org/img/sqla_logo.png)
@@ -66,7 +66,7 @@ flask run
 
 URL  | Description.Short | Description.Full
 -------------|:-------------|:-------------
-http://127.0.0.1:5000/  | главная страница сервиса | 1)ввести URL в поле "Оригинальная длинная ссылка", 2)придумать и ввести значение в поле "Пользовательский короткий идентификатор" (6 сммволов min, 16 доступны для ввода: символы "a-z A-Z", цифры "0-9"), 3)Нажать кнопку "Создать ссылку", в результате: 3.1)ниже кнопки отобразится собщение "Ваша новая ссылка готова" + ссылка (в формате http://127.0.0.1:5000/ + введенный идентификатор), 3.2)перейти по созданной ссылке (переход на страницу оригинальной ссылки), 4)нажать (слева вверху) ссылку "Главная" (в результате: переход на главную страницу): 4.1)повторить ввод URL в поле "Оригинальная длинная ссылка" и нажать кнопку "Создать ссылку", 4.2)в результате: новая ссылка сгенерится автоматически (в формате http://127.0.0.1:5000/ + 6 случайных символов: a-z A-Z 0-9)
+http://127.0.0.1:5000/  | главная страница сервиса | 1)ввести URL в поле "Оригинальная длинная ссылка", 2)придумать и ввести значение в поле "Пользовательский короткий идентификатор" (16 сммволов max доступны для ввода: символы "a-z A-Z", цифры "0-9"), 3)Нажать кнопку "Создать ссылку", в результате: 3.1)ниже кнопки отобразится собщение "Ваша новая ссылка готова" + ссылка (в формате http://127.0.0.1:5000/ + введенный идентификатор), 3.2)перейти по созданной ссылке (переход на страницу оригинальной ссылки), 4)нажать (слева вверху) ссылку "Главная" (в результате: переход на главную страницу): 4.1)повторить ввод URL в поле "Оригинальная длинная ссылка" и нажать кнопку "Создать ссылку", 4.2)в результате: новая ссылка сгенерится автоматически (в формате http://127.0.0.1:5000/ + 6 случайных символов: a-z A-Z 0-9)
 http://127.0.0.1:5000/api/id/   | эндпоинт POST | {  "url": "https://www.gazeta.ru/", "custom_id": "ga"}
 http://localhost/api/id/short_id/   | эндпоинт GET | http://127.0.0.1:5000/api/id/ga
 https://editor.swagger.io/   | спецификация API | https://github.com/Celin-zsv/yacut/blob/master/openapi.yml
