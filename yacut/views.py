@@ -11,9 +11,9 @@ def index_view():
     """Ввод оригинальной ссылки, ввод /генерация user short идентификатора."""
     form = URLMap_form()
     if form.validate_on_submit():  # POST
-        short = form.custom_id.data or URLMap.get_short()
-        if URLMap.check_short(short):
-            flash(SHORT_IS_BUSY_FORM % short, 'flash_short')
+        short = form.custom_id.data or URLMap.check_short(None)
+        if URLMap.get_url_obj(short).first():
+            flash(SHORT_IS_BUSY_FORM.format(short=short), 'flash_short')
             return render_template('index.html', form=form)
         return render_template(
             'index.html',
@@ -26,5 +26,4 @@ def index_view():
 @app.route('/<short_id>')
 def follow_link(short_id):
     """Перейти к оригинальному url на основе: user короткий идентификатор."""
-    return redirect(
-        URLMap.query.filter(URLMap.short == short_id).first_or_404().original)
+    return redirect(URLMap.get_url_obj(short_id).first_or_404().original)

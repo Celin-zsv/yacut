@@ -5,9 +5,9 @@ from re import match
 
 from flask import url_for
 
-from yacut import db
-
-from .constants import (REGULAR_EXPRESSION, REQUIRED_FIELD, SHORT_IS_BUSY_API,
+from . import db
+from .constants import (JSON_KEY_FOR_ORIGINAL, JSON_KEY_FOR_SHORT,
+                        REGULAR_EXPRESSION, REQUIRED_FIELD, SHORT_IS_BUSY_API,
                         SHORT_MAX_LENGTH, SHORT_NAME_ERROR, SYMBOLS,
                         SYMBOLS_COUNT, URL_ERROR, URL_MAX_LENGTH,
                         URL_MAX_LENGTH_ERROR, URL_REGULAR_EXPRESSION)
@@ -20,9 +20,6 @@ class URLMap(db.Model):
     short = db.Column(db.String(SHORT_MAX_LENGTH), unique=True)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
-    JSON_KEY_FOR_ORIGINAL = 'url'
-    JSON_KEY_FOR_SHORT = 'custom_id'
-
     def to_dict(self):
         """Cохранить объект_модели в словарь."""
         return dict(
@@ -30,10 +27,15 @@ class URLMap(db.Model):
             short_link=url_for('index_view', _external=True) + self.short
         )
 
-    @staticmethod
-    def save_obj(**data):
-        """Создать объект_модели + сохранить в БД."""
-        url_obj = URLMap(**data)
+    @classmethod
+    def save_obj(cls, **data):
+        """1)Проверить вх.данные(API), 2)Создать объект, 3)Сохранить в БД."""
+        if cls.original.name not in data:  # is API-data
+            url_obj = URLMap(
+                original=cls.check_url(data),
+                short=cls.check_short(data.get(JSON_KEY_FOR_SHORT)))
+        else:
+            url_obj = URLMap(**data)
         db.session.add(url_obj)
         db.session.commit()
         return url_obj
@@ -41,35 +43,27 @@ class URLMap(db.Model):
     @classmethod
     def check_url(cls, data):
         """Проверка оригинальной ссылки."""
-        if cls.JSON_KEY_FOR_ORIGINAL not in data:
+        if JSON_KEY_FOR_ORIGINAL not in data:
             raise InvalidAPIUsage(REQUIRED_FIELD)
-        url_value = data.get(cls.JSON_KEY_FOR_ORIGINAL)
+        url_value = data.get(JSON_KEY_FOR_ORIGINAL)
         if not match(URL_REGULAR_EXPRESSION, url_value):
             raise InvalidAPIUsage(URL_ERROR)
         if len(url_value) > URL_MAX_LENGTH:
             raise InvalidAPIUsage(URL_MAX_LENGTH_ERROR)
         return url_value
 
-    @staticmethod
-    def get_short():
-        """Генерация: пользовательский короткий идентификатор."""
-        return ''.join(random.choice(SYMBOLS) for item in range(SYMBOLS_COUNT))
-
     @classmethod
     def check_short(cls, short):
-        """Проверка уникальности: пользовательский короткий идентификатор."""
-        if cls.query.filter(cls.short == short).first():
-            return True  # is double
-        return False
-
-    @classmethod
-    def check_custom_id(cls, data):
-        """Проверка: пользовательский короткий идентификатор."""
-        custom_id_value = data.get(cls.JSON_KEY_FOR_SHORT)
-        if not custom_id_value:
-            custom_id_value = data[cls.JSON_KEY_FOR_SHORT] = cls.get_short()
-        if cls.check_short(custom_id_value):
-            raise InvalidAPIUsage(SHORT_IS_BUSY_API % custom_id_value)
-        if not re.match(REGULAR_EXPRESSION, custom_id_value):
+        """Генерация, проверка уникальности /маски: user короткий идентификатор."""
+        if not short:
+            short = ''.join(random.choice(SYMBOLS) for item in range(SYMBOLS_COUNT))
+        if cls.get_url_obj(short).first():
+            raise InvalidAPIUsage(SHORT_IS_BUSY_API.format(short=short))
+        if not re.match(REGULAR_EXPRESSION, short):
             raise InvalidAPIUsage(SHORT_NAME_ERROR)
-        return custom_id_value
+        return short
+
+    @staticmethod
+    def get_url_obj(short_id):
+        """Получить оригинальный url на основе: user короткий идентификатор."""
+        return URLMap.query.filter(URLMap.short == short_id)
